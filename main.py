@@ -37,18 +37,10 @@ class Player(Turtle):
         screen.onkeypress(self.turn_right, right_key)
         screen.onkey(self.fire, fire_key)
     def turn_left(self):
-        x, y = self.position()
-        self.setpos(x-10, y)
-        if self.xcor() < -230:
-            x, y = self.position()
-            self.setpos(x+10, y)
+        self.left(10)
 
     def turn_right(self):
-        x, y = self.position()
-        self.setpos(x+10, y)
-        if self.xcor() > 230:
-            x, y = self.position()
-            self.setpos(x-10, y)
+        self.right(10)
         
     def fire(self):
         self.bullets.append(Bullet(self))
@@ -70,13 +62,26 @@ class Bullet(Turtle):
         self.player = player
 
     def move(self):
-            self.forward(10)
-            if not (-250 < self.xcor() < 250 and -250 < self.ycor() < 250):
-                self.die()
+        self.forward(10)
+        if not (-250 < self.xcor() < 250 and -250 < self.ycor() < 250):
+            self.die()
 
     def die(self):
         self.hideturtle()
         self.player.bullets.remove(self)
+
+class Block(Turtle):
+    def __init__(self, x, y):
+        super().__init__()
+        self.ht()
+        self.speed(255)
+        self.color("gray")
+        self.shape("square")
+        self.health = 3
+        self.penup()
+        self.goto(x, y)
+        self.alive = True
+        self.st()
 
 ### PROGRAM ###
 screen = Screen()
@@ -87,8 +92,14 @@ screen.listen()
 
 playing_area()
 
+blocks = []
+
 p1 = Player(-100, 0, "red", screen, "d", "a", "w", 3)
 p2 = Player(100, 0, "blue", screen, "Right", "Left", "Up", 3)
+
+for y in range(190, 140, -20):
+    for x in range(-100, 120, 20):
+        blocks.append(Block(x, y))
 
 while True:
     for bullet in p1.bullets:
