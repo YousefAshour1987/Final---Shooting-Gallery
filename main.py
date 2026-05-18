@@ -4,7 +4,6 @@ import time
 
 def generate_color():
     return f"#{random.randint(0, 0xFFFFFF):06x}"
-
 def playing_area():
     pen = Turtle()
     pen.ht()
@@ -17,7 +16,6 @@ def playing_area():
     pen.goto(-240,-240)
     pen.goto(-240,240)
     pen.end_fill()
-
 class Player(Turtle):
     def __init__(self, x, y, color, screen, right_key, left_key, fire_key, score_display):
         super().__init__()
@@ -37,26 +35,20 @@ class Player(Turtle):
         screen.onkeypress(self.turn_left, left_key)
         screen.onkeypress(self.turn_right, right_key)
         screen.onkey(self.fire, fire_key)
-
     def turn_left(self):
         self.left(10)
-
     def turn_right(self):
         self.right(10)
-
     def fire(self):
         if len(self.bullets) < 5 and self.alive:
             self.bullets.append(Bullet(self))
-
     def die(self):
         self.alive = False
         self.hideturtle()
-
 class Bullet(Turtle):
     def __init__(self, player):
         super().__init__()
         self.ht()
-        self.speed(0)
         self.penup()
         self.goto(player.xcor(), player.ycor())
         self.seth(player.heading())
@@ -64,31 +56,23 @@ class Bullet(Turtle):
         self.st()
         self.player = player
         self.alive = True
-
     def move(self):
         self.forward(10)
-
         x = self.xcor()
         y = self.ycor()
-
         if x > 235:
             self.setx(235)
             self.setheading(180 - self.heading())
         elif x < -235:
             self.setx(-235)
             self.setheading(180 - self.heading())
-
         if y > 235:
-            self.sety(235)
-            self.setheading(360 - self.heading())
+            self.die()
         elif y < -235:
-            self.sety(-235)
-            self.setheading(360 - self.heading())
-
+            self.die()
     def die(self):
         self.hideturtle()
         self.alive = False
-
 class Block(Turtle):
     def __init__(self, x, y, color):
         super().__init__()
@@ -101,11 +85,9 @@ class Block(Turtle):
         self.color(color)
         self.alive = True
         self.st()
-
     def strike(self):
         if self.alive == False:
             return False
-
         self.health -= 1
         if self.health == 2:
             self.color("orange")
@@ -115,14 +97,11 @@ class Block(Turtle):
             self.die()
             return True
         return False
-
     def die(self):
         self.hideturtle()
         self.alive = False
-
-    def move_down(self):
+    def move(self):
         self.sety(self.ycor() - 20)
-
 class Score(Turtle):
     def __init__(self, x, y, player_name):
         super().__init__()
@@ -134,25 +113,19 @@ class Score(Turtle):
         self.score = 0
         self.player_name = player_name
         self.update_score()
-
     def update_score(self):
         self.clear()
         self.write(f"{self.player_name}: {self.score}")
-
     def add_score(self, points):
         self.score += points
         self.update_score()
-
 screen = Screen()
 screen.setup(520, 600)
 screen.bgcolor("black")
 screen.tracer(0)
-
 screen.listen()
 
-
 playing_area()
-
 blocks = []
 game_over = False
 
@@ -185,10 +158,9 @@ while True:
 
     if time.time() - start > 2:
         start = time.time()
-
         for j in blocks:
             if j.alive:
-                j.move_down()
+                j.move()
                 if j.ycor() <= -230:
                     game_over = True
                     break
@@ -198,7 +170,6 @@ while True:
                 if p2.alive and p2.distance(j) < 25:
                     game_over = True
                     break
-
         if game_over:
             break
 
@@ -221,7 +192,6 @@ while True:
 
             for k in player.bullets:
                 k.move()
-
                 for i in blocks:
                     if i.alive and bullet.distance(i) < 20:
                         block_hit = i.strike()
@@ -229,14 +199,7 @@ while True:
 
                         if block_hit:
                             player.score_display.add_score(1)
-
                         break
-
-    update_blocks = []
-    for h in blocks:
-        if h.alive:
-            update_blocks.append(h)
-    blocks = update_blocks
 
 screen.tracer(1)
 if game_over:
