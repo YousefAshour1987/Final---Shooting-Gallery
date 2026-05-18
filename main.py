@@ -122,7 +122,7 @@ class Score(Turtle):
 screen = Screen()
 screen.setup(520, 600)
 screen.bgcolor("black")
-screen.tracer(0)
+screen.ontimer(update(), 70)
 screen.listen()
 
 playing_area()
@@ -155,7 +155,6 @@ start = time.time()
 
 while True:
     screen.update()
-
     if time.time() - start > 2:
         start = time.time()
         for j in blocks:
@@ -201,7 +200,7 @@ while True:
                             player.score_display.add_score(1)
                         break
 
-screen.tracer(1)
+screen.ontimer(update(), 70)
 if game_over:
     pen = Turtle()
     pen.ht()
